@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,9 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
 Route::middleware([
     'auth:sanctum',
@@ -25,4 +23,22 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+    Route::get('/',[ProductController::class,'index'])->name('product.index');
+    Route::get('/create',[ProductController::class,'create'])->name('product.create');
+    Route::get('/edit/{id}',[ProductController::class,'edit'])->name('product.edit');
+    Route::get('/show/{id}',[ProductController::class,'show'])->name('product.show');
+    Route::get('/delete/{id}',[ProductController::class,'destroy'])->name('product.destroy');
+    Route::post('/store',[ProductController::class,'store'])->name('product.store');
+    Route::get('/update/{id}',[ProductController::class,'update'])->name('product.update');
+});
+
+
+Route::prefix('product')->group(function(){
+    Route::get('/',[ProductController::class,'index'])->name('product.home');
+    Route::get('/create',[ProductController::class,'create'])->name('product.create');
+    Route::get('/edit/{id}',[ProductController::class,'edit'])->name('product.edit');
+    Route::get('/show/{id}',[ProductController::class,'show'])->name('product.show');
+    Route::get('/delete/{id}',[ProductController::class,'destroy'])->name('product.destroy');
+    Route::post('/store',[ProductController::class,'store'])->name('product.store');
+    Route::get('/update/{id}',[ProductController::class,'update'])->name('product.update');
 });

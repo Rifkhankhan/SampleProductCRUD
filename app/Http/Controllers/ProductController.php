@@ -1,9 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Product;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 class ProductController extends Controller
 {
     /**
@@ -13,7 +13,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        $products = Product::all();
+        return view('Product.home',compact('products'));
     }
 
     /**
@@ -23,7 +24,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        return view('Product.create');
     }
 
     /**
@@ -34,7 +35,31 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'price' => 'required|numeric|gt:0',
+            'image' => "required|mimes:jpg,jpeg,png"
+        ]);
+
+
+        $brand_image = $request->file('image');
+        $name_gen = hexdec(uniqid());
+        $image_extendtion = strtolower($brand_image->getClientOriginalExtension());
+        $image_name = $name_gen.'.'.$image_extendtion;
+        $up_location = 'public/image/';
+        $last_img = $up_location.$image_name;
+        $brand_image->move($up_location,$last_img);
+
+
+       $Product=DB::table('products')->insert([
+        'name' => $request->name,
+        'status' => $request->status,
+        'price' => $request->price,
+        'image' => $brand_image,
+       ]);
+
+        return redirect()->route('product.index')->with('success','successfully inserted');
+        // return view('Product.home',compact('customer'));
     }
 
     /**
@@ -45,7 +70,8 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        //
+        $product=DB::table('products')->where('id',$id)->first();
+        return view('product.show',compact('product'));
     }
 
     /**
@@ -56,7 +82,8 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        //
+        $product=DB::table('products')->where('id',$id)->first();
+        return view('product.edit',compact('product'));
     }
 
     /**
@@ -68,7 +95,31 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
+        $request->validate([
+            'name' => 'required',
+            'price' => 'required|numeric|gt:0',
+            'image' => "required|mimes:jpg,jpeg,png",
+            'status' => "required"
+        ]);
+
+        $brand_image = $request->file('image');
+        $name_gen = hexdec(uniqid());
+        $image_extendtion = strtolower($brand_image->getClientOriginalExtension());
+        $image_name = $name_gen.'.'.$image_extendtion;
+        $up_location = 'public/image/';
+        $last_img = $up_location.$image_name;
+        $brand_image->move($up_location,$last_img);
+
+        DB::table('products')->where('id',$id)->update([
+            'name'=>$request->name,
+            "image"=>$brand_image,
+            "price"=>$request->price,
+            "status"=>$request->status,
+        ]);
+
+        return redirect()->route('product.index')->with('success','successfully updated');
+
     }
 
     /**
@@ -79,6 +130,8 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Product::where('id',$id)->delete();
+
+        return redirect()->back();
     }
 }

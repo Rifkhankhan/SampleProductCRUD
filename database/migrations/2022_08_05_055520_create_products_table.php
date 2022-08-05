@@ -19,6 +19,8 @@ class CreateProductsTable extends Migration
             $table->double('price', 10, 2);
             $table->string('image');
             $table->enum('status',['active','inactive']);
+            $table->timestamps();
+
         });
     }
 

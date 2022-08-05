@@ -2,13 +2,7 @@
 
 @section('product')
 
-<!--
-@if($user=='product')
-    <h2 class='text-center'>Entroll A New {{$user}}</h2>
-@elseif($user=='order')
-    <h2 class='text-center'>Entroll A New {{$user}}</h2>
-@endif
- -->
+
 
     @if ($errors->any())
     <div class="alert alert-danger">
@@ -28,25 +22,25 @@
     @endif
     <div class=" mt-3 p-3 colomn">
             <div class="justify-content-center">
-                <!-- <a href="{{route('product.show',$user='product')}}" class="btn btn-secondary mb-3 ">Back</a> -->
+            <a href="{{route('product.index')}}" class="btn btn-secondary mb-3 ">Back</a>
             </div>
             <div>
 
-                <form  method="post" enctype="multipart/form-data">
+                <form  method="post" action="{{route('product.store')}}" enctype="multipart/form-data">
                             @csrf
                             <table class="p-3 " >
                                 <tr>
                                     <th><label for="name"> Name:</label></th>
-                                    <td><input type="text" name="name" id="name"></td>
+                                    <td><input type="text" name="name" id="name" required></td>
                                 </tr>
                                 <tr>
                                     <th><label for="price"> Price:</label></th>
-                                    <td><input type="number" name="price" id="price"></td>
+                                    <td><input type="number" name="price" id="price" required></td>
                                 </tr>
 
                                 <tr>
                                     <th><label for="photos"> Photos:</label></th>
-                                    <td><input type="file" name="photos" id="photos"></td>
+                                    <td><input type="file" name="image" id="photos" required></td>
                                     <td><input type="hidden" name="status" id="status" value='active'></td>
                                 </tr>
 
@@ -55,7 +49,6 @@
                             <button type="submit" class="btn btn-success">Create</button>
                     </form>
 
-            <!-- @endif -->
             </div>
 
     </div>

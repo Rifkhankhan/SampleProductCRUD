@@ -5,23 +5,42 @@
         <div class="justify-content-center">
             <a href="{{route('product.index')}}" class="btn btn-secondary mb-3 ">Back</a>
         </div>
-        <div>
-            <form action="{{route('product.update',$product->id)}}">
-                <table class="table table-bordered  table-hover " >
-                    <tr><th>ID</th><td>{{$product->id}}</td> </tr>
-                    <tr><th>Name</th><td><input type="text" name="name" value="{{$product->name}}" required></td></tr>
-                    <tr><th>Price</th> <td><input type="text" name="price" value="{{$product->price}}" required></td></tr>
-                    <tr><th>Image</th> <td><input type="file" name="image" value="{{$product->image}}" required></td></tr>
-                    <tr><th>Status</th> <td>
+
+        <div class="container">
+            <form action="{{route('product.update',$product->id)}}" enctype="multipart/form-data" method="POST">
+                @csrf
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" name="name" value="{{$product->name}}" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Price</label>
+                        <input type="number" name="price" value="{{$product->price}}" class="form-control" required>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>Status</label>
                         <select name="status" id="">
-                            <option value="active" {{ $product->status == 'active' ? 'selected' : '' }}>Active</option>
-                            <option value="inactive" {{ $product->status == 'inactive' ? 'selected' : '' }}>InActive</option>
+                            <option value="active" {{ $product->status == 'active' ? 'selected' : '' }} class="form-control">Active</option>
+                            <option value="inactive" {{ $product->status == 'inactive' ? 'selected' : '' }} class="form-control">InActive</option>
                         </select>
-                    </td></tr>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Current Image</label>
+                        <img style="width:150px;height:150px;margin:0%;padding:0%;" class="form-control" src="{{ asset($product->image) }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>New Image</label>
+                        <input type="file" name="image"  class="form-control" >
+                        <input type="hidden" name="oldimage" value="{{$product->image}}" class="form-control">
+                    </div>
 
 
-                </table>
-                <button type='submit' class="btn btn-primary">Update</button>
+                <button type='submit' class="btn btn-primary" class="form-control">Update</button>
             </form>
         </div>
 

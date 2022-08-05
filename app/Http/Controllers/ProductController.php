@@ -48,14 +48,14 @@ class ProductController extends Controller
         $image_name = $name_gen.'.'.$image_extendtion;
         $up_location = 'public/image/';
         $last_img = $up_location.$image_name;
-        $brand_image->move($up_location,$last_img);
+        $brand_image->move($up_location,$image_name);
 
 
        $Product=DB::table('products')->insert([
         'name' => $request->name,
         'status' => $request->status,
         'price' => $request->price,
-        'image' => $brand_image,
+        'image' => $last_img,
        ]);
 
         return redirect()->route('product.index')->with('success','successfully inserted');
@@ -99,26 +99,40 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required',
             'price' => 'required|numeric|gt:0',
-            'image' => "required|mimes:jpg,jpeg,png",
             'status' => "required"
         ]);
 
+        $oldimage = $request->oldimage;
         $brand_image = $request->file('image');
-        $name_gen = hexdec(uniqid());
-        $image_extendtion = strtolower($brand_image->getClientOriginalExtension());
-        $image_name = $name_gen.'.'.$image_extendtion;
-        $up_location = 'public/image/';
-        $last_img = $up_location.$image_name;
-        $brand_image->move($up_location,$last_img);
+        if($brand_image)
+        {
+            $name_gen = hexdec(uniqid());
+            $image_extendtion = strtolower($brand_image->getClientOriginalExtension());
+            $image_name = $name_gen.'.'.$image_extendtion;
+            $up_location = 'public/image/';
+            $last_img = $up_location.$image_name;
+            $brand_image->move($up_location,$image_name);
 
-        DB::table('products')->where('id',$id)->update([
-            'name'=>$request->name,
-            "image"=>$brand_image,
-            "price"=>$request->price,
-            "status"=>$request->status,
-        ]);
+            unlink($oldimage);
+            DB::table('products')->where('id',$id)->update([
+                'name'=>$request->name,
+                "image"=>$last_img,
+                "price"=>$request->price,
+                "status"=>$request->status,
+            ]);
 
-        return redirect()->route('product.index')->with('success','successfully updated');
+            return redirect()->route('product.index')->with('success','successfully updated');
+
+        }
+        else{
+            DB::table('products')->where('id',$id)->update([
+                'name'=>$request->name,
+                "price"=>$request->price,
+                "status"=>$request->status,
+            ]);
+
+            return redirect()->route('product.index')->with('success','successfully updated');
+        }
 
     }
 
@@ -130,6 +144,8 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
+        $image = Product::find($id)->image;
+        unlink($image);
         Product::where('id',$id)->delete();
 
         return redirect()->back();

@@ -19,7 +19,7 @@
                 <th scope="row">{{$product->id}}</th>
                 <td>{{$product->name}}</td>
                 <td>{{$product->price}}</td>
-                <td><img src="{{ asset($product->image) }}"></td>
+                <td><img style="width:150px;height:150px;margin:0%;padding:0%;" src="{{ asset($product->image) }}"></td>
                 <td>{{$product->status}}</td>
                 <td>
                     <a href="{{route('product.show',$product->id)}}" class="btn btn-primary">Show</a>
